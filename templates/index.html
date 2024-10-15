@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed" rel='stylesheet'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload MP3/WAV File</title>
     <style>
         body {
-            background-image: url('{{ url_for('static', filename='DallasArtFair.jpg') }}'); 
+            background-image: url('{{ url_for('static', filename='DallasArtFair.png') }}'); 
             background-size: cover;
             color: white;
             overflow: hidden;
-            font-family: Arial, sans-serif;
+            font-family: Roboto, "Roboto Condensed";
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
         }
         .container {
             text-align: center;
@@ -22,28 +27,45 @@
         }
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
+            background-color: #FFFFFF;
+            color: black;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 20px;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #66666;
         }
     </style>
+    <script>
+        function validateForm() {
+            var youtubeUrl = document.getElementById("youtube_url").value;
+            var fileInput = document.getElementById("file").value;
+            
+            // Check if both fields are empty
+            if (!youtubeUrl && !fileInput) {
+                alert("Please provide either a YouTube URL or upload a file.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Upload Your MP3 or WAV File</h1>
-        <form method="POST" action="/input" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".mp3, .wav" required>
+        <h1>Upload Your MP3 or WAV File or paste a Youtube URL</h1>
+        <form method="POST" action="/input" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <label for="youtube_url">YouTube URL:</label>
+            <input type="text" id="youtube_url" name="youtube_url"><br><br>
+
+        
+            <input type="file" id="file" name="file" accept=".mp3, .wav"><br><br>
 
             <label for="vocalsOnly"> Vocals Only</label>
             <input type="checkbox" id="vocalsOnly" name="vocalsOnly" value="vocals">
             <label for="moreQuality"> Better Quality</label>
             <input type="checkbox" id="moreQuality" name="moreQuality" value="quality">
-            <br>
+            <br><br>
             <button type="submit">Upload</button>
         </form>
     </div>

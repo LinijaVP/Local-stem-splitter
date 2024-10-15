@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed" rel='stylesheet'>
     <title>Download Separated MP3 Files</title>
     <style>
         body {
-            background-image: url('{{ url_for('static', filename='DallasArtFair.jpg') }}');
+            background-image: url('{{ url_for('static', filename='DallasArtFair.png') }}');
             background-size: cover;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: Roboto, "Roboto Condensed";
             display: flex;
             flex-wrap: wrap;
             justify-content: center; 
@@ -32,8 +34,8 @@
       
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
+            background-color: #FFFFFF;
+            color: black;
             border: none;
             cursor: pointer;
             font-size: 16px;
@@ -41,7 +43,7 @@
             
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #666666;
         }
     </style>
 </head>
@@ -61,11 +63,21 @@
         </ul>
 
         <p>Click here to download all as zip:</p>
-        <div class="card">
-            <a href="{{ url_for('download_zip', path=path) }}">
-                <button>Download ALL</button>
-            </a>
-        </div>
+        <ul>
+            <div class="card">
+                <a href="{{ url_for('download_zip', path=path) }}">
+                    <button>Download ALL</button>
+                </a>
+            </div>
+        </ul>
+        <br><br>
+        <ul>
+            <div class="card">
+                <a href="/">
+                    <button>Return</button>
+                </a>
+            </div>
+        </ul>
     </div>
 </body>
 </html>

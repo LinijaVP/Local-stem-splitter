@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, send_file
 import demucs.separate
 import os
+import shutil
 from zipfile import ZipFile
+from pytubefix import YouTube
+from pydub import AudioSegment
 
 app = Flask(__name__)
 INPUT_FOLDER = 'input/'
@@ -23,30 +26,38 @@ def index():
 # Input file and process
 @app.route('/input', methods=['POST'])
 def upload_file():
-    if 'file' not in request.files:
-        return redirect(request.url)
+    #if 'file' not in request.files:
+    #    return redirect(request.url)
+    #if file.filename == '':
+    #    return redirect(request.url)
     
+    vocalsOnly = "vocalsOnly" in request.form
+    quality = "htdemucs"
+    if ("moreQuality" in request.form):
+        quality = "htdemucs_ft"
+    
+    youtube_url = request.form['youtube_url']
     file = request.files['file']
-    if file.filename == '':
-        return redirect(request.url)
-
-    if file:
+    file_path = ""
+    fileName = ""
+     
+    if youtube_url:
+        file_path = downloadYoutube(youtube_url)
+        fileName = os.path.basename(file_path)
+    
+    elif file:
         file_path = os.path.join(app.config['INPUT_FOLDER'], file.filename)
         file.save(file_path)
-        
-        vocalsOnly = "vocalsOnly" in request.form
-        quality = "htdemucs"
-        if ("moreQuality" in request.form):
-            quality = "htdemucs_ft"
+        fileName = file.filename
         
        
 
-        stemSplit(file.filename, file_path, quality, vocalsOnly)
+    stemSplit(fileName, file_path, quality, vocalsOnly)
         
-        stems = os.listdir(os.path.join(app.config['SEPARATED_FOLDER'], quality, file.filename[:-4]))
-        pathos = os.path.join(app.config['SEPARATED_FOLDER'], quality, file.filename[:-4])
+    stems = os.listdir(os.path.join(app.config['SEPARATED_FOLDER'], quality, fileName[:-4]))
+    pathos = os.path.join(app.config['SEPARATED_FOLDER'], quality, fileName[:-4])
         
-        return redirect(url_for('result', filenames=stems, path=pathos))
+    return redirect(url_for('result', filenames=stems, path=pathos))
 
 # Results page
 @app.route('/result')
@@ -99,7 +110,7 @@ def cleanFolder():
     # Remove input files
     inputFiles = os.listdir(app.config['INPUT_FOLDER'])
     howManyFiles = len(inputFiles)
-    if(howManyFiles >=2):
+    if(howManyFiles >=1):
         for file in inputFiles:
             filePath = os.path.join(app.config['INPUT_FOLDER'], file)
             if(os.path.isfile(filePath)):
@@ -139,6 +150,20 @@ def cleanFolder():
                 print(f"Deleted: {folder}")
             except Exception as e:
                 print(f"Error deleting folder {folder}: {e}")
+
+def downloadYoutube(url):
+    video = YouTube(url).streams.filter(only_audio=True).first().download()
+    base, ext = os.path.splitext(video)
+    fileName = os.path.basename(base)
+    new_file = os.path.join(base[:-len(fileName)], app.config["INPUT_FOLDER"], fileName ) + '.mp3'
+    if os.path.isfile(new_file):
+        os.remove(video)
+    else:
+        os.rename(video, new_file)
+    
+    return new_file
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
