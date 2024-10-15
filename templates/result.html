@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Separated MP3 Files</title>
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='DallasArtFair.jpg') }}');
+            background-size: cover;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+        }
+        .container {
+            padding: 50px; 
+        }
+        .card {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 200px;
+        }
+        .card:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+      
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Files are Ready!</h1>
+        <p>Click below to download the separated files:</p>
+        
+        <ul>
+            {% for filename in filenames %}
+            <div class="card">
+                <a href="{{ url_for('download_file', filename=filename, path=path) }}">
+                    <button>Download {{ filename }}</button>
+                </a>
+            </div>
+            {% endfor %}
+        </ul>
+
+        <p>Click here to download all as zip:</p>
+        <div class="card">
+            <a href="{{ url_for('download_zip', path=path) }}">
+                <button>Download ALL</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
