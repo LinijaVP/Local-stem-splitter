@@ -17,6 +17,51 @@ app.config['SEPARATED_FOLDER'] = SEPARATED_FOLDER
 # Start page
 @app.route('/')
 def index():
+    # Remove input files
+    inputFiles = os.listdir(app.config['INPUT_FOLDER'])
+    howManyFiles = len(inputFiles)
+    if(howManyFiles >=2):
+        for file in inputFiles:
+            filePath = os.path.join(app.config['INPUT_FOLDER'], file)
+            if(os.path.isfile(filePath)):
+                try:
+                    os.remove(filePath)
+                    print(f"Deleted: {file}")
+                except Exception as e:
+                    print(f"Error deleting file {file}: {e}")
+        
+        # Remove separated folders
+        inputFiles = os.listdir(app.config['SEPARATED_FOLDER'])
+        for folder in inputFiles:
+            folderPath = os.path.join(app.config['SEPARATED_FOLDER'], folder)
+            folders = os.listdir(folderPath)
+            for folder2 in folders:
+                folderPath2 = os.path.join(folderPath, folder2)
+                folders2 = os.listdir(folderPath2)
+                for file in folders2:
+                    filePath = os.path.join(folderPath2, file)
+                    if(os.path.isfile(filePath)):
+                        try:
+                            os.remove(filePath)
+                            print(f"Deleted: {file}")
+                        except Exception as e:
+                            print(f"Error deleting file {file}: {e}")
+
+                try:
+                    os.rmdir(folderPath2)
+                    print(f"Deleted: {folder2}")
+                except Exception as e:
+                    print(f"Error deleting folder {folder2}: {e}")
+                
+                
+                
+            try:
+                os.rmdir(folderPath)
+                print(f"Deleted: {folder}")
+            except Exception as e:
+                print(f"Error deleting folder {folder}: {e}")
+            
+        
     return render_template('index.html')
 
 # Input file and process
@@ -36,7 +81,7 @@ def upload_file():
         quality = "htdemucs"
         vocalsOnly = True
 
-        #stemSplit(file.filename, file_path, quality, vocalsOnly)
+        stemSplit(file.filename, file_path, quality, vocalsOnly)
         
         stems = os.listdir(os.path.join(app.config['SEPARATED_FOLDER'], quality, file.filename[:-4]))
         pathos = os.path.join(app.config['SEPARATED_FOLDER'], quality, file.filename[:-4])
@@ -55,7 +100,10 @@ def result():
 def download_file():
     filename = request.args.getlist('filename')
     path = request.args.getlist('path')
-    return send_from_directory(path[0], filename[0], as_attachment=True)
+    response = send_from_directory(path[0], filename[0], as_attachment=True)
+
+    
+    return response
 
 # Download zipfile
 @app.route('/download_zip')
@@ -83,9 +131,9 @@ def stemSplit(filename, file_path, quality, vocalsOnly):
             demucs.separate.main(["--mp3", "-n", quality, file_path])
     else:
         if(vocalsOnly):
-            demucs.separate.main(["--two-stems", "vocals", "-n", quality, file_path])
+            demucs.separate.main(["--mp3", "--two-stems", "vocals", "-n", quality, file_path])
         else:
-            demucs.separate.main(["-n", quality, file_path])
+            demucs.separate.main(["--mp3", "-n", quality, file_path])
         
 
 
