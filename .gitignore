@@ -1,0 +1,13 @@
+# Environment variable files
+.env
+
+# Flask specific
+instance/
+
+# Flask uploads and temporary files
+input/
+separated/
+
+
+# VS Code settings
+.vscode/
