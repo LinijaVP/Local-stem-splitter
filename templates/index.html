@@ -38,6 +38,11 @@
         <h1>Upload Your MP3 or WAV File</h1>
         <form method="POST" action="/input" enctype="multipart/form-data">
             <input type="file" name="file" accept=".mp3, .wav" required>
+
+            <label for="vocalsOnly"> Vocals Only</label>
+            <input type="checkbox" id="vocalsOnly" name="vocalsOnly" value="vocals">
+            <label for="moreQuality"> Better Quality</label>
+            <input type="checkbox" id="moreQuality" name="moreQuality" value="quality">
             <br>
             <button type="submit">Upload</button>
         </form>

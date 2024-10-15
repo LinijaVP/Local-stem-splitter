@@ -33,9 +33,13 @@ def upload_file():
     if file:
         file_path = os.path.join(app.config['INPUT_FOLDER'], file.filename)
         file.save(file_path)
-
+        
+        vocalsOnly = "vocalsOnly" in request.form
         quality = "htdemucs"
-        vocalsOnly = True
+        if ("moreQuality" in request.form):
+            quality = "htdemucs_ft"
+        
+       
 
         stemSplit(file.filename, file_path, quality, vocalsOnly)
         
