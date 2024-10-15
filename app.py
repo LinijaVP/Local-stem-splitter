@@ -16,52 +16,8 @@ app.config['SEPARATED_FOLDER'] = SEPARATED_FOLDER
 
 # Start page
 @app.route('/')
-def index():
-    # Remove input files
-    inputFiles = os.listdir(app.config['INPUT_FOLDER'])
-    howManyFiles = len(inputFiles)
-    if(howManyFiles >=2):
-        for file in inputFiles:
-            filePath = os.path.join(app.config['INPUT_FOLDER'], file)
-            if(os.path.isfile(filePath)):
-                try:
-                    os.remove(filePath)
-                    print(f"Deleted: {file}")
-                except Exception as e:
-                    print(f"Error deleting file {file}: {e}")
-        
-        # Remove separated folders
-        inputFiles = os.listdir(app.config['SEPARATED_FOLDER'])
-        for folder in inputFiles:
-            folderPath = os.path.join(app.config['SEPARATED_FOLDER'], folder)
-            folders = os.listdir(folderPath)
-            for folder2 in folders:
-                folderPath2 = os.path.join(folderPath, folder2)
-                folders2 = os.listdir(folderPath2)
-                for file in folders2:
-                    filePath = os.path.join(folderPath2, file)
-                    if(os.path.isfile(filePath)):
-                        try:
-                            os.remove(filePath)
-                            print(f"Deleted: {file}")
-                        except Exception as e:
-                            print(f"Error deleting file {file}: {e}")
-
-                try:
-                    os.rmdir(folderPath2)
-                    print(f"Deleted: {folder2}")
-                except Exception as e:
-                    print(f"Error deleting folder {folder2}: {e}")
-                
-                
-                
-            try:
-                os.rmdir(folderPath)
-                print(f"Deleted: {folder}")
-            except Exception as e:
-                print(f"Error deleting folder {folder}: {e}")
-            
-        
+def index():    
+    cleanFolder()
     return render_template('index.html')
 
 # Input file and process
@@ -135,7 +91,50 @@ def stemSplit(filename, file_path, quality, vocalsOnly):
         else:
             demucs.separate.main(["--mp3", "-n", quality, file_path])
         
+def cleanFolder():
+    # Remove input files
+    inputFiles = os.listdir(app.config['INPUT_FOLDER'])
+    howManyFiles = len(inputFiles)
+    if(howManyFiles >=2):
+        for file in inputFiles:
+            filePath = os.path.join(app.config['INPUT_FOLDER'], file)
+            if(os.path.isfile(filePath)):
+                try:
+                    os.remove(filePath)
+                    print(f"Deleted: {file}")
+                except Exception as e:
+                    print(f"Error deleting file {file}: {e}")
+        
+        # Remove separated folders
+        inputFiles = os.listdir(app.config['SEPARATED_FOLDER'])
+        for folder in inputFiles:
+            folderPath = os.path.join(app.config['SEPARATED_FOLDER'], folder)
+            folders = os.listdir(folderPath)
+            for folder2 in folders:
+                folderPath2 = os.path.join(folderPath, folder2)
+                folders2 = os.listdir(folderPath2)
+                for file in folders2:
+                    filePath = os.path.join(folderPath2, file)
+                    if(os.path.isfile(filePath)):
+                        try:
+                            os.remove(filePath)
+                            print(f"Deleted: {file}")
+                        except Exception as e:
+                            print(f"Error deleting file {file}: {e}")
 
+                try:
+                    os.rmdir(folderPath2)
+                    print(f"Deleted: {folder2}")
+                except Exception as e:
+                    print(f"Error deleting folder {folder2}: {e}")
+                
+                
+                
+            try:
+                os.rmdir(folderPath)
+                print(f"Deleted: {folder}")
+            except Exception as e:
+                print(f"Error deleting folder {folder}: {e}")
 
 if __name__ == '__main__':
     app.run(debug=True)
