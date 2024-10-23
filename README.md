@@ -16,3 +16,10 @@ When all dependencies finish loading just run:
 
 Program tested on Python 3.10.
 
+### Docker
+You can also build and run with Docker using:
+
+```docker build -t stemsplitter .```
+
+```docker run -p 5000:5000 stemsplitter```
+
